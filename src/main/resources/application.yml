@@ -1,0 +1,10 @@
+logging:
+  file: logback.xml
+
+kie:
+  serverUrl: http://localhost:8180/kie-server/services/rest/server
+  serverUsername: kieserver
+  serverPassword: kieserver1!
+  containers:
+    - packageName: mortgages.mortgages
+      containerName: mortgages_1.0.0-SNAPSHOT
