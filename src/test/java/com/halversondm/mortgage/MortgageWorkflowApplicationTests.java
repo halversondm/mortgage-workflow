@@ -3,6 +3,7 @@ package com.halversondm.mortgage;
 import com.halversondm.mortgage.config.KieServerProperties;
 import com.halversondm.mortgage.service.DecisionService;
 import mortgages.mortgages.Applicant;
+import mortgages.mortgages.Bankruptcy;
 import mortgages.mortgages.IncomeSource;
 import mortgages.mortgages.LoanApplication;
 import org.apache.commons.lang3.builder.ReflectionToStringBuilder;
@@ -49,13 +50,13 @@ public class MortgageWorkflowApplicationTests {
 	List<Object> facts() {
 		List<Object> facts = new ArrayList<>();
 		Applicant applicant = new Applicant();
-		applicant.setAge(39);
+		applicant.setAge(40);
 		applicant.setApplicationDate(new Date());
 		applicant.setName("Dan Halverson");
 		applicant.setCreditRating("AA");
 		facts.add(applicant);
-		//Bankruptcy bankruptcy = new Bankruptcy();
-		//facts.add(bankruptcy);
+		Bankruptcy bankruptcy = new Bankruptcy();
+		facts.add(bankruptcy);
 		IncomeSource incomeSource = new IncomeSource();
 		incomeSource.setAmount(100000);
 		incomeSource.setType("Asset");

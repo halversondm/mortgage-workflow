@@ -6,6 +6,9 @@
         </encoder>
     </appender>
 
+    <logger name="org.kie" level="debug" />
+    <logger name="com.halversondm" level="debug" />
+
     <root level="info">
         <appender-ref ref="STDOUT" />
     </root>

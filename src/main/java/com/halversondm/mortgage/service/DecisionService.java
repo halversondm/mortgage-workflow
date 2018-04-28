@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -25,10 +26,16 @@ public class DecisionService {
     @Autowired
     private KieServicesClient kieServicesClient;
 
+    RuleServicesClient rulesClient;
+
+    @PostConstruct
+    public void initialize() {
+        rulesClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
+    }
+
     public List<Object> executeCommands(List<Object> facts, String container) {
         LOGGER.debug("== Sending commands to the server ==");
         List<Object> results = new ArrayList<>();
-        RuleServicesClient rulesClient = kieServicesClient.getServicesClient(RuleServicesClient.class);
         KieCommands commandsFactory = KieServices.Factory.get().getCommands();
         Command<?> batchCommand = commandsFactory.newBatchExecution(buildCommands(commandsFactory, facts));
         ServiceResponse<ExecutionResults> executeResponse = rulesClient.executeCommandsWithResults(container, batchCommand);

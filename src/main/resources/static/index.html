@@ -1,0 +1,134 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Mortgage Workflow</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/css/bootstrap.min.css"
+          integrity="sha384-9gVQ4dYFwwWSjIDZnLEWnxCjeSWFphJiwGPXr1jddIhOegiu1FwO5qRGvFXOdJZ4" crossorigin="anonymous">
+</head>
+<body>
+<div class="container">
+    <h1>Mortgage Workflow</h1>
+    <form id="mortgageApplication">
+        <fieldset>
+            <legend>About Applicant</legend>
+            <div class="form-group">
+                <label for="name">Name</label>
+                <input type="text" class="form-control" id="name" name="name" placeholder="Enter full name">
+            </div>
+            <div class="form-group">
+                <label for="age">Age</label>
+                <input type="number" class="form-control" id="age" name="age" placeholder="Age in whole years">
+            </div>
+            <div class="form-group">
+                <label for="creditRating">Credit Rating</label>
+                <select id="creditRating" class="form-control" name="creditRating">
+                    <option></option>
+                    <option>AA</option>
+                    <option>OK</option>
+                    <option>Sub Prime</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="incomeSource">Income Source</label>
+                <select id="incomeSource" class="form-control" name="incomeSource">
+                    <option></option>
+                    <option>Job</option>
+                    <option>Asset</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="amountOnDeposit">Deposit Amount</label>
+                <input type="number" class="form-control" id="amountOnDeposit" name="amountOnDeposit"
+                       placeholder="Dollars in da bank">
+            </div>
+            <div class="form-group">
+                <label for="incomeAmount">Income Amount</label>
+                <input type="number" class="form-control" id="incomeAmount" name="incomeAmount"
+                       placeholder="Income in whole dollars">
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Bankruptcy</legend>
+            <div class="form-group">
+                <label for="amountOwed">Amount Owed in Bankruptcy</label>
+                <input type="number" class="form-control" id="amountOwed" name="amountOwed"
+                       placeholder="In whole dollars">
+            </div>
+            <div class="form-group">
+                <label for="yearOfOccurrence">Year of Bankruptcy</label>
+                <input type="number" class="form-control" id="yearOfOccurrence" name="yearOfOccurrence">
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Loan Terms</legend>
+            <div class="form-group">
+                <label for="amountToBorrow">Amount to Borrow</label>
+                <input type="number" class="form-control" id="amountToBorrow" name="amountToBorrow"
+                       placeholder="Loan Amount in whole dollars">
+            </div>
+            <div class="form-group">
+                <label for="lengthInYears">Length in Years</label>
+                <input type="number" class="form-control" id="lengthInYears" name="lengthInYears"
+                       placeholder="Loan Term">
+            </div>
+        </fieldset>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+    <div id="response"></div>
+</div>
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.0/umd/popper.min.js"
+        integrity="sha384-cs/chFZiN24E4KMATLdqdvsezGxaGsi4hLGOzlXwp5UZB1LY//20VyM2taTB4QvJ"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.0/js/bootstrap.min.js"
+        integrity="sha384-uefMccjFJAIv6A+rW+L4AHf99KvxDjWSu1z9VI8SKNVmz4sk7buKt/6v9KI65qnm"
+        crossorigin="anonymous"></script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#mortgageApplication").submit(function (event) {
+            event.preventDefault();
+            var data = collectData();
+            sendData(data);
+        });
+    });
+
+    function collectData() {
+        var data = {};
+        var inputs = $("#mortgageApplication").serializeArray();
+        $.each(inputs, function (i, input) {
+            data[input.name] = input.value;
+        });
+        console.log(data);
+        return data;
+    }
+
+    function sendData(data) {
+        $.ajax({
+            url: "/api/submit",
+            data: JSON.stringify(data),
+            type: "POST",
+            contentType: "application/json",
+            dataType: "json",
+        })
+            .done(function (json) {
+                console.log(json);
+                $("<h1>").text("Application Status:").appendTo("#response");
+                $("<div class=\"content\">").html("Approved? " + json.approved).appendTo("#response");
+                $("<div class=\"content\">").html("Approved Rate: " + json.approvedRate).appendTo("#response");
+                $("<div class=\"content\">").html("Insurance Cost " + json.insuranceCost).appendTo("#response");
+                $("<div class=\"content\">").html("Explanation For Not Approved " + json.explanation).appendTo("#response");
+            })
+            // Code to run if the request fails; the raw request and
+            // status codes are passed to the function
+            .fail(function (xhr, status, errorThrown) {
+                alert("Sorry, there was a problem!");
+                console.log("Error: " + errorThrown);
+                console.log("Status: " + status);
+                console.dir(xhr);
+            });
+    }
+</script>
+</body>
+</html>
